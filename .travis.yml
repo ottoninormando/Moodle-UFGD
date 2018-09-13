@@ -1,0 +1,19 @@
+sudo: required
+dist: trusty
+group: edge
+
+language: node_js
+node_js:
+  - '8.10'
+
+before_script:
+  - npm install -g pgb-cli
+
+script:
+- if [ "$TRAVIS_BRANCH" == 'master' ] ; then APP_ID=$MASTER_APP ; else APP_ID=$INT_APP ; fi
+- if [ "$TRAVIS_BRANCH" == 'master' ] ; then IOS_KEY=$MASTER_IOS ; else IOS_KEY=$INT_IOS ; fi
+- if [ "$TRAVIS_BRANCH" == 'master' ] ; then ANDROID_KEY=$MASTER_ANDROID ; else ANDROID_KEY=$INT_ANDROID ; fi
+- echo "{\"authtoken\":\"$PGB_TOKEN\"}" > ~/.pgbrc
+- pgb unlock android $ANDROID_KEY
+- pgb unlock ios $IOS_KEY
+- pgb clone $APP_ID ios-key=$IOS_KEY android-key=$ANDROID_KEY
